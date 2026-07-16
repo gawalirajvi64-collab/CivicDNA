@@ -1,0 +1,26 @@
+{
+  "name": "civicdna-backend",
+  "version": "1.0.0",
+  "description": "Backend for CivicDNA AI Decision Intelligence Platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "CivicDNA",
+    "AI",
+    "Hackathon"
+  ],
+  "author": "Your Team",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

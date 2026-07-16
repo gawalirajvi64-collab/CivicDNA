@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | CivicDNA</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav>
+
+        <div class="logo">
+            CivicDNA
+        </div>
+
+        <ul>
+
+            <li>
+                <a href="index.html">
+                    Home
+                </a>
+            </li>
+
+            <li>
+                <a href="complaint.html">
+                    Report Complaint
+                </a>
+            </li>
+
+            <li>
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+            </li>
+
+        </ul>
+
+    </nav>
+
+
+    <section class="dashboard">
+
+
+        <h1>
+            AI Insights Dashboard
+        </h1>
+
+
+        <!-- STATISTICS -->
+
+        <div class="stats">
+
+
+            <div class="stat-card">
+
+                <h2 id="totalComplaints">
+                    0
+                </h2>
+
+                <p>
+                    Total Complaints
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h2 id="activeClusters">
+                    0
+                </h2>
+
+                <p>
+                    Active Clusters
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h2 id="rootCauses">
+                    0
+                </h2>
+
+                <p>
+                    Root Causes Found
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h2 id="aiConfidence">
+                    0%
+                </h2>
+
+                <p>
+                    AI Confidence
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- AI ROOT CAUSE -->
+
+        <div class="root-cause">
+
+
+            <h2>
+                Detected Root Cause
+            </h2>
+
+
+            <div class="cause-card">
+
+
+                <h3 id="rootCauseTitle">
+                    Analyzing...
+                </h3>
+
+
+                <p id="rootCauseDescription">
+
+                    AI is analyzing civic complaint patterns...
+
+                </p>
+
+
+                <span id="confidenceScore">
+
+                    Confidence Score: --
+
+                </span>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- RECENT COMPLAINTS -->
+
+        <div class="recent">
+
+
+            <h2>
+                Recent Complaints
+            </h2>
+
+
+            <table>
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            ID
+                        </th>
+
+                        <th>
+                            Location
+                        </th>
+
+                        <th>
+                            Type
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="complaintsTable">
+
+                    <!-- Data will be inserted here -->
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- DASHBOARD API INTEGRATION -->
+
+    <script>
+
+
+        async function loadDashboard() {
+
+
+            try {
+
+
+                // ==========================
+                // GET ALL COMPLAINTS
+                // ==========================
+
+
+                const complaintsResponse =
+                    await fetch(
+                        "http://localhost:5000/api/complaints"
+                    );
+
+
+                const complaintsData =
+                    await complaintsResponse.json();
+
+
+                // ==========================
+                // GET AI ANALYSIS
+                // ==========================
+
+
+                const aiResponse =
+                    await fetch(
+                        "http://localhost:5000/api/ai/analyze"
+                    );
+
+
+                const aiData =
+                    await aiResponse.json();
+
+
+                // ==========================
+                // UPDATE STATISTICS
+                // ==========================
+
+
+                document.getElementById(
+                    "totalComplaints"
+                ).innerText =
+                    complaintsData.count;
+
+
+                document.getElementById(
+                    "activeClusters"
+                ).innerText =
+                    aiData.totalClusters;
+
+
+                document.getElementById(
+                    "rootCauses"
+                ).innerText =
+                    aiData.totalClusters;
+
+
+                // ==========================
+                // AVERAGE CONFIDENCE
+                // ==========================
+
+
+                const analyses =
+                    aiData.analysis;
+
+
+                if (
+                    analyses &&
+                    analyses.length > 0
+                ) {
+
+
+                    const totalConfidence =
+                        analyses.reduce(
+                            function(
+                                sum,
+                                item
+                            ) {
+
+                                return sum +
+                                    item.confidence;
+
+                            },
+                            0
+                        );
+
+
+                    const averageConfidence =
+                        Math.round(
+                            totalConfidence /
+                            analyses.length
+                        );
+
+
+                    document.getElementById(
+                        "aiConfidence"
+                    ).innerText =
+                        averageConfidence + "%";
+
+
+                    // ==========================
+                    // TOP ROOT CAUSE
+                    // ==========================
+
+
+                    const topCause =
+                        analyses[0];
+
+
+                    document.getElementById(
+                        "rootCauseTitle"
+                    ).innerText =
+                        topCause.rootCause;
+
+
+                    document.getElementById(
+                        "rootCauseDescription"
+                    ).innerText =
+                        topCause.explanation;
+
+
+                    document.getElementById(
+                        "confidenceScore"
+                    ).innerText =
+                        "Confidence Score: " +
+                        topCause.confidence +
+                        "%";
+
+
+                }
+
+
+                // ==========================
+                // COMPLAINT TABLE
+                // ==========================
+
+
+                const table =
+                    document.getElementById(
+                        "complaintsTable"
+                    );
+
+
+                table.innerHTML = "";
+
+
+                complaintsData.complaints.forEach(
+                    function(
+                        complaint,
+                        index
+                    ) {
+
+
+                        const row =
+                            document.createElement(
+                                "tr"
+                            );
+
+
+                        row.innerHTML = `
+
+                            <td>
+                                #${index + 1}
+                            </td>
+
+                            <td>
+                                ${complaint.location}
+                            </td>
+
+                            <td>
+                                ${complaint.complaintType}
+                            </td>
+
+                            <td>
+                                ${complaint.status}
+                            </td>
+
+                        `;
+
+
+                        table.appendChild(row);
+
+
+                    }
+                );
+
+
+            } catch (error) {
+
+
+                console.error(
+                    "Dashboard loading error:",
+                    error
+                );
+
+
+            }
+
+
+        }
+
+
+        // Load data when dashboard opens
+
+        loadDashboard();
+
+
+    </script>
+
+
+</body>
+
+</html>

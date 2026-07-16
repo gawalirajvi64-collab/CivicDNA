@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Complaint | CivicDNA</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav>
+        <div class="logo">CivicDNA</div>
+
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="complaint.html">Report Complaint</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+        </ul>
+    </nav>
+
+    <section class="complaint-section">
+
+        <div class="left-panel">
+            <h1>Report a Civic Issue</h1>
+
+            <p>
+                Help us build smarter and cleaner cities.
+                Your complaint can help CivicDNA discover
+                hidden infrastructure problems.
+            </p>
+
+            <div class="info-box">
+                🌱 Every complaint matters.
+            </div>
+
+            <div class="info-box">
+                🤖 AI analyzes complaint patterns.
+            </div>
+
+            <div class="info-box">
+                🎯 Root causes are identified faster.
+            </div>
+        </div>
+
+        <div class="form-container">
+
+            <form id="complaintForm">
+
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Enter Your Name"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="location"
+                    placeholder="Location"
+                    required
+                >
+
+                <select id="complaintType" required>
+
+                    <option value="">
+                        Select Complaint Type
+                    </option>
+
+                    <option value="Pothole">
+                        Pothole
+                    </option>
+
+                    <option value="Water Leakage">
+                        Water Leakage
+                    </option>
+
+                    <option value="Garbage">
+                        Garbage
+                    </option>
+
+                    <option value="Streetlight">
+                        Streetlight
+                    </option>
+
+                    <option value="Flooding">
+                        Flooding
+                    </option>
+
+                    <option value="Road Damage">
+                        Road Damage
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
+                </select>
+
+                <textarea
+                    id="description"
+                    rows="5"
+                    placeholder="Describe the issue..."
+                    required
+                ></textarea>
+
+                <input
+                    type="file"
+                    id="image"
+                >
+
+                <button type="submit">
+                    Submit Complaint
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+    <!-- BACKEND INTEGRATION -->
+
+    <script>
+
+        const form =
+            document.getElementById("complaintForm");
+
+
+        form.addEventListener(
+            "submit",
+            async function(event) {
+
+                // Stop page reload
+                event.preventDefault();
+
+
+                // Get form values
+                const name =
+                    document.getElementById("name").value;
+
+                const location =
+                    document.getElementById("location").value;
+
+                const complaintType =
+                    document.getElementById(
+                        "complaintType"
+                    ).value;
+
+                const description =
+                    document.getElementById(
+                        "description"
+                    ).value;
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "http://localhost:5000/api/complaints",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body: JSON.stringify({
+
+                                    name,
+                                    location,
+                                    complaintType,
+                                    description
+
+                                })
+
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (data.success) {
+
+                        alert(
+                            "✅ Complaint submitted successfully!"
+                        );
+
+                        form.reset();
+
+
+                    } else {
+
+                        alert(
+                            "❌ " + data.message
+                        );
+
+                    }
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Backend Error:",
+                        error
+                    );
+
+
+                    alert(
+                        "❌ Cannot connect to CivicDNA backend. Make sure the server is running."
+                    );
+
+                }
+
+            }
+
+        );
+
+    </script>
+
+</body>
+</html>
